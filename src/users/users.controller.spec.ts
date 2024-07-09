@@ -29,7 +29,6 @@ describe('UsersController', () => {
         password: 'password123',
         name: 'John Doe',
         email: 'john@example.com',
-        role: 'USER',
       };
 
       jest

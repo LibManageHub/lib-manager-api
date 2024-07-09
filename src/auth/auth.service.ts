@@ -12,43 +12,27 @@ export class AuthService {
   ) {}
 
   async register(createUserDto: CreateUserDto) {
-    console.log('The new password', createUserDto.password);
     createUserDto.password = await bcrypt.hash(createUserDto.password, 10);
-    console.log('The hashed new password', createUserDto.password);
     return this.usersService.createUser(createUserDto);
   }
 
   async validateUser(username: string, pass: string): Promise<any> {
     const user = await this.usersService.findByUsername(username);
-    console.log(
-      'found user',
-      user,
-      '\n',
-      pass,
-      '\n',
-      await bcrypt.hash(pass, 10),
-    );
-    console.log(
-      'Is the password correct?',
-      await bcrypt.compare(pass, user.password),
-    );
     if (user && (await bcrypt.compare(pass, user.password))) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...result } = user; // Exclude password from returned result
       console.log(result);
       return result;
     }
-    console.log('null');
     return null;
   }
 
   async login(user: any) {
     const payload = {
       username: user.username,
-      sub: user.userId,
+      sub: user.id,
       role: user.role,
     };
-    console.log(payload);
     return {
       access_token: this.jwtService.sign(payload),
     };
