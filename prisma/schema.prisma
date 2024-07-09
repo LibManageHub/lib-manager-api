@@ -9,8 +9,92 @@ datasource db {
 
 model User {
   id       Int    @id @default(autoincrement())
-  email    String @unique
   username String @unique
   password String
   name     String
+  email    String @unique
+  role     Role   @default(USER)
+
+  borrowings    Borrowing[]
+  reviews       Review[]
+  notifications Notification[]
+
+  createdAt DateTime @default(now())
+}
+
+model Book {
+  id         Int         @id @default(autoincrement())
+  title      String
+  author     String
+  isbn       String      @unique
+  genre      String
+  exemplars  Exemplar[]
+  reviews    Review[]
+  borrowings Borrowing[]
+}
+
+model Exemplar {
+  id        Int       @id @default(autoincrement())
+  bookId    Int
+  book      Book      @relation(fields: [bookId], references: [id])
+  status    Status    @default(AVAILABLE)
+  condition Condition
+
+  borrowings Borrowing[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Borrowing {
+  id         Int      @id @default(autoincrement())
+  bookId     Int
+  exemplarId Int
+  userId     Int
+  dueDate    DateTime
+  returned   Boolean  @default(false)
+  book       Book     @relation(fields: [bookId], references: [id])
+  exemplar   Exemplar @relation(fields: [exemplarId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Review {
+  id      Int    @id @default(autoincrement())
+  rating  Int
+  comment String
+  userId  Int
+  bookId  Int
+  user    User   @relation(fields: [userId], references: [id])
+  book    Book   @relation(fields: [bookId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  message   String
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Condition {
+  NEW
+  GOOD
+  FAIR
+  POOR
+}
+
+enum Status {
+  AVAILABLE
+  CHECKED_OUT
+  RESERVED
 }
