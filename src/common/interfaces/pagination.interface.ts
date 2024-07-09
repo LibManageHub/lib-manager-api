@@ -6,5 +6,3 @@ export interface Pagination<T> {
   nextPage?: number;
   previousPage?: number;
 }
-
-
