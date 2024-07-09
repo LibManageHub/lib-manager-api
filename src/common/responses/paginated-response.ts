@@ -23,4 +23,14 @@ export class PaginatedResponse<T> implements Pagination<T> {
     this.nextPage = nextPage;
     this.previousPage = previousPage;
   }
+
+  setNavigationPages() {
+    if (this.currentPage < this.totalPages) {
+      this.nextPage = this.currentPage + 1;
+    }
+
+    if (this.currentPage > 1) {
+      this.previousPage = this.currentPage - 1;
+    }
+  }
 }

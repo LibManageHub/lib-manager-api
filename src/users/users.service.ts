@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { PaginatedResponse } from '../common/responses/paginated-response';
 import { CreateUserDto } from './dtos/create-user.dto';
@@ -14,19 +15,38 @@ export class UsersService {
     });
   }
 
-  async findAllUsers(page: number = 1, pageSize: number = 10) {
+  async findAllUsers(page?: number, pageSize?: number) {
+    const actualPage = page || 1;
+    const actualPageSize = pageSize || 10;
+
     const users = await this.prisma.user.findMany({
-      skip: (page - 1) * pageSize,
-      take: pageSize,
+      skip: (actualPage - 1) * actualPageSize,
+      take: actualPageSize,
     });
+
     const total = await this.prisma.user.count();
-    return new PaginatedResponse(users, total, page, pageSize);
+    const totalPages = Math.ceil(total / actualPageSize);
+
+    const paginatedResponse = new PaginatedResponse(
+      users,
+      total,
+      actualPage,
+      totalPages,
+    );
+
+    paginatedResponse.setNavigationPages();
+
+    return paginatedResponse;
   }
 
   async findUserById(id: number) {
-    return this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id },
     });
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+    return user;
   }
 
   async findByUsername(username: string) {

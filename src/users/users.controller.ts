@@ -5,11 +5,13 @@ import {
   Body,
   Patch,
   Param,
+  Query,
   Delete,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
+import { ParseIntPipe } from '../common/pipes/parse-int.pipe';
 
 @Controller('users')
 export class UsersController {
@@ -21,12 +23,15 @@ export class UsersController {
   }
 
   @Get()
-  async findAll() {
-    return this.usersService.findAllUsers();
+  async findAll(
+    @Query('page', new ParseIntPipe()) page?: number,
+    @Query('pageSize', new ParseIntPipe()) pageSize?: number,
+  ) {
+    return this.usersService.findAllUsers(page, pageSize);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number) {
+  async findOne(@Param('id', new ParseIntPipe()) id: number) {
     return this.usersService.findUserById(id);
   }
 
@@ -36,7 +41,7 @@ export class UsersController {
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: number) {
+  async remove(@Param('id', new ParseIntPipe()) id: number) {
     return this.usersService.deleteUser(id);
   }
 }
