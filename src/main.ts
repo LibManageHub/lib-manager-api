@@ -19,6 +19,7 @@ async function bootstrap() {
     .setTitle('Library Manager API')
     .setDescription('The Library Manager API description')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, options);

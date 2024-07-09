@@ -22,11 +22,4 @@ export class CreateUserDto {
     description: 'The email of the user',
   })
   email: string;
-
-  @ApiProperty({
-    enum: Role,
-    example: Role.USER,
-    description: 'The role of the user',
-  })
-  role?: Role;
 }

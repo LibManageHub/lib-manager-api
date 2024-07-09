@@ -4,6 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { PaginatedResponse } from '../common/responses/paginated-response';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
